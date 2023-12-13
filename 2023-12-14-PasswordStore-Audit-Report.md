@@ -11,7 +11,6 @@ header-includes:
     \centering
     \begin{figure}[h]
         \centering
-        <!-- \includegraphics[width=0.5\textwidth]{logo.pdf}  -->
     \end{figure}
     \vspace*{2cm}
     {\Huge\bfseries PasswordStore Audit Report\par}
@@ -23,9 +22,6 @@ header-includes:
     {\large \today\par}
 \end{titlepage}
 
-\maketitle
-
-<!-- Your report starts here! -->
 
 Prepared by: [Manish Roy](https://confident-hodgkin-b880dc.netlify.app/)
 
@@ -49,6 +45,7 @@ Lead Security Researcher:
     - [\[H-01\] Passwords stored on-chain are visable to anyone, irrespective of solidity variable visibility](#h-01-passwords-stored-on-chain-are-visable-to-anyone-irrespective-of-solidity-variable-visibility)
     - [\[H-02\] `PasswordStore::setPassword` is callable by anyone](#h-02-passwordstoresetpassword-is-callable-by-anyone)
   - [Low](#low)
+    - [\[L-01\] Initialization timeframe vulnerability](#l-01-initialization-timeframe-vulnerability)
   - [Informational](#informational)
     - [\[I-01\] The `PasswordStore::getPassword` natspec indicates a parameter that doesn't exist, causing the natspec to be incorrect](#i-01-the-passwordstoregetpassword-natspec-indicates-a-parameter-that-doesnt-exist-causing-the-natspec-to-be-incorrect)
 </details>
@@ -197,8 +194,7 @@ However, anyone can directly read this using any number of off chain methodologi
 
 ## Low
 
-[L-01] Initialization timeframe vulnerability
-
+### [L-01] Initialization timeframe vulnerability
 
 **Description:** There is a period between contract deployment and the explicit call to `PasswordStore::setPassword` function during which the password remains in its default state. It's essential to note that even after addressing this issue, the password's public visibility on the blockchain cannot be entirely mitigated, as blockchain data is inherently public as already stated in the "Storing password in blockchain" vulnerability.
 
