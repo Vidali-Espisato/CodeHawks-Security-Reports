@@ -23,6 +23,8 @@ header-includes:
 \end{titlepage}
 
 
+<!-- Your report starts here! -->
+
 Prepared by: [Manish Roy](https://confident-hodgkin-b880dc.netlify.app/)
 
 Lead Security Researcher:
@@ -123,24 +125,29 @@ However, anyone can directly read this using any number of off chain methodologi
 **Proof of Concept:** The below test case shows how anyone could read the password directly from the blockchain. We use foundry's cast tool to read directly from the storage of the contract, without being the owner.
 
 1. Create a locally running chain
+
     > make anvil
 
 2. Deploy the contract to the chain
+
     > make deploy
 
 3. Run the storage tool
 
     We use `1` because that's the storage slot of `s_password` in the contract.
-    > cast storage <CONTRACT_ADDRESS> 1 --rpc-url <RPC_URL>
 
-    You'll get an output that looks like this:` `
+    > cast storage {CONTRACT_ADDRESS} 1 --rpc-url {RPC_URL}
+
+    You'll get an output that looks like this:
+
     `0x6d7950617373776f726400000000000000000000000000000000000000000014`
 
 4. _(Optional)_ You can then parse that hex to a string with:
 
     > cast parse-bytes32-string 0x6d7950617373776f726400000000000000000000000000000000000000000014
 
-    And get an output of:` `
+    And get an output of:
+
     `myPassword`
 
 **Recommended Mitigation:** It is advisable to reconsider the contract's overall architecture. One suggestion is to encrypt the password outside of the blockchain and then store the encrypted version on the blockchain. This would require the user to remember another password to decrypt the password. Furthermore, it would be a good idea to remove the function that allows others to view the password, as we wouldn't want the user to accidentally send the password along with their transaction.
@@ -162,8 +169,6 @@ However, anyone can directly read this using any number of off chain methodologi
 **Impact:** Anyone can set/change the password of the contract.
 
 **Proof of Concept:** Add the following to the `PasswordStore.t.sol` test suite.
-<details>
-<summary>Code</summary>
 
 ```ts
     function test_anyone_can_set_password(address randomAddress) public {
@@ -179,8 +184,6 @@ However, anyone can directly read this using any number of off chain methodologi
     }
 ```
 
-</details>
-</br>
 
 **Recommended Mitigation:** Add an access control modifier to the `PasswordStore::setPassword` function.
 
@@ -213,7 +216,7 @@ However, anyone can directly read this using any number of off chain methodologi
 ```ts
     /*
      * @notice This allows only the owner to retrieve the password.
-|>   * @param newPassword The new password to set.
+~>   * @param newPassword The new password to set.
      */
     function getPassword() external view returns (string memory) {
 ```
@@ -225,3 +228,5 @@ However, anyone can directly read this using any number of off chain methodologi
 ```diff
 -    * @param newPassword The new password to set.
 ```
+
+---
